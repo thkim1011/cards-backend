@@ -6,10 +6,11 @@ from flask_session import Session
 from backend.api.new_game import new_game
 from backend.api.get_user_info import get_user_info
 from backend.global_state import games
+from backend.api.join_game import join_game
 
 from backend.socket.join import create_join_handler
 from backend.socket.exit import create_exit_handler
-from backend.socket.message import create_message_handler
+from backend.socket.chat import create_chat_handler
 
 app = Flask(__name__)
 # CORS
@@ -24,11 +25,12 @@ socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
 on_join = create_join_handler(socketio)
 on_exit = create_exit_handler(socketio)
-message = create_message_handler(socketio)
+message = create_chat_handler(socketio)
 
 # Blueprints
 app.register_blueprint(new_game)
 app.register_blueprint(get_user_info)
+app.register_blueprint(join_game)
 
 if __name__ == '__main__':
     socketio.run(app)
