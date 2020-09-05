@@ -1,7 +1,7 @@
 from flask import Flask, session, render_template, request
 from flask_socketio import SocketIO, join_room, leave_room, send
 from flask_cors import CORS, cross_origin
-import coolname
+from flask_session import Session
 
 from backend.api.new_game import new_game
 from backend.api.get_user_info import get_user_info
@@ -14,13 +14,13 @@ from backend.socket.message import create_message_handler
 app = Flask(__name__)
 # CORS
 app.config['SECRET_KEY'] = 'secret!'
-CORS(app)
+CORS(app, supports_credentials=True)
 
-# games
-games = {}
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # SOCKET IO
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
 on_join = create_join_handler(socketio)
 on_exit = create_exit_handler(socketio)
